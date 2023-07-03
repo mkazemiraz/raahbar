@@ -65,6 +65,13 @@ function App() {
               fontWeight: 500,
             },
           },
+          components: {
+            MuiSelect: {
+              styleOverrides: {
+                select: "4px 0px 10px 130px !important",
+              },
+            },
+          },
         },
         faIR
       ),

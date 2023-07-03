@@ -13,7 +13,6 @@ export default function MainTemplate() {
         <Box
           component="main"
           sx={{
-            backgroundColor: theme.palette.grey[100],
             flexGrow: 1,
             minHeight: "100vh",
             overflow: "auto",
