@@ -183,16 +183,7 @@ const DataTable = (props: { data: User[] }) => {
             onChange={(e) => {
               table.setPageSize(Number(e.target.value));
             }}
-            sx={{ p: 0, minWidth: 70 }}
-            MenuProps={{ style: { padding: 0 } }}
-            margin="dense"
-            inputProps={{
-              style: {
-                backgroundColor: theme.palette.common.white,
-                borderRadius: "30px",
-                fontSize: "14px",
-              },
-            }}
+            sx={{ p: 0, minWidth: 100 }}
           >
             {[10, 25, 50].map((pageSize) => (
               <MenuItem key={pageSize} value={pageSize}>
