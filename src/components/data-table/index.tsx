@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "./index.module.css";
 import {
   createColumnHelper,
@@ -39,69 +39,72 @@ const DataTable = (props: { data: User[] }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const columnHelper = createColumnHelper<User>();
-  const columns = [
-    columnHelper.accessor("first_name", {
-      header: t("FirstName"),
-    }),
-    columnHelper.accessor("last_name", {
-      header: t("LastName"),
-    }),
-    columnHelper.accessor("code", {
-      header: t("Code"),
-      cell: (info) => (
-        <div>
-          <span>{convertEnglishToPersianDigits(info.getValue())}</span>
-        </div>
-      ),
-    }),
-    columnHelper.accessor("company", {
-      header: t("Company"),
-    }),
-    columnHelper.accessor((row) => row.status, {
-      header: t("Status"),
-      cell: (info) => (
-        <>
-          <Stack alignItems={"center"} direction={"row"} gap={2}>
-            <Box
-              width={20}
-              height={20}
-              border={5}
-              borderRadius={"50%"}
-              borderColor={"#CBCBCB"}
-              bgcolor={
-                info.getValue()
-                  ? theme.palette.success.main
-                  : theme.palette.error.main
-              }
-            />
-            <Typography
-              component={"span"}
-              variant="body2"
-              sx={{
-                color: info.getValue()
-                  ? theme.palette.success.main
-                  : theme.palette.error.main,
-              }}
-            >
-              {info.getValue() ? t("Active") : t("Deactive")}
-            </Typography>
-          </Stack>
-        </>
-      ),
-    }),
-    columnHelper.accessor("access", {
-      header: t("Access"),
-      cell: (info) => (
-        <Chip
-          label={`${t("Access")} ${convertEnglishToPersianDigits(
-            info.getValue()
-          )}`}
-          className={styles[`access-level-${info.getValue()}`]}
-          sx={{ color: theme.palette.common.white, p: [1, 2] }}
-        />
-      ),
-    }),
-  ];
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("first_name", {
+        header: t("FirstName"),
+      }),
+      columnHelper.accessor("last_name", {
+        header: t("LastName"),
+      }),
+      columnHelper.accessor("code", {
+        header: t("Code"),
+        cell: (info) => (
+          <div>
+            <span>{convertEnglishToPersianDigits(info.getValue())}</span>
+          </div>
+        ),
+      }),
+      columnHelper.accessor("company", {
+        header: t("Company"),
+      }),
+      columnHelper.accessor((row) => row.status, {
+        header: t("Status"),
+        cell: (info) => (
+          <>
+            <Stack alignItems={"center"} direction={"row"} gap={2}>
+              <Box
+                width={20}
+                height={20}
+                border={5}
+                borderRadius={"50%"}
+                borderColor={"#CBCBCB"}
+                bgcolor={
+                  info.getValue()
+                    ? theme.palette.success.main
+                    : theme.palette.error.main
+                }
+              />
+              <Typography
+                component={"span"}
+                variant="body2"
+                sx={{
+                  color: info.getValue()
+                    ? theme.palette.success.main
+                    : theme.palette.error.main,
+                }}
+              >
+                {info.getValue() ? t("Active") : t("Deactive")}
+              </Typography>
+            </Stack>
+          </>
+        ),
+      }),
+      columnHelper.accessor("access", {
+        header: t("Access"),
+        cell: (info) => (
+          <Chip
+            label={`${t("Access")} ${convertEnglishToPersianDigits(
+              info.getValue()
+            )}`}
+            className={styles[`access-level-${info.getValue()}`]}
+            sx={{ color: theme.palette.common.white, p: [1, 2] }}
+          />
+        ),
+      }),
+    ],
+    [columnHelper, t, theme]
+  );
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const filter = useSelector((state: RootState) => state.global.filterQuery);
