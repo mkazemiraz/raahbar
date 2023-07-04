@@ -20,6 +20,9 @@ import { useTranslation } from "react-i18next";
 import MenuItem from "./menu-item";
 import LOGO from "@assets/images/logo.svg";
 import SearchIcon from "@mui/icons-material/Search";
+import { RootState } from "../../../redux/Store";
+import { setFilterQuery } from "../../../redux/GlobalSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const IDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -35,6 +38,10 @@ const IDrawer = styled(MuiDrawer, {
 const Sidebar = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const filterQuery = useSelector(
+    (state: RootState) => state.global.filterQuery
+  );
   return (
     <IDrawer variant="permanent">
       <Box
@@ -60,6 +67,10 @@ const Sidebar = () => {
           fullWidth
           id="search"
           placeholder={t("Search")}
+          value={filterQuery}
+          onChange={(e) =>
+            dispatch(setFilterQuery({ filterQuery: e.target.value }))
+          }
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

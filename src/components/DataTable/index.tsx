@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./index.module.css";
 import {
-  RowModel,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  SortingState,
 } from "@tanstack/react-table";
 import { User } from "@constants/GlobalTypes";
 import { useTranslation } from "react-i18next";
 import {
   Box,
-  Button,
   Chip,
   MenuItem,
   Select,
@@ -27,8 +28,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { convertEnglishToPersianDigits } from "@utils/index";
-import { Info } from "@mui/icons-material";
 import IPaginate from "@cmp/common/pagination";
+
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { useSelector } from "react-redux";
+import { RootState } from "@redux/Store";
+
 const DataTable = (props: { data: User[] }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -42,39 +48,45 @@ const DataTable = (props: { data: User[] }) => {
     }),
     columnHelper.accessor("code", {
       header: t("Code"),
-      cell: (info) => convertEnglishToPersianDigits(info.getValue()),
+      cell: (info) => (
+        <div>
+          <span>{convertEnglishToPersianDigits(info.getValue())}</span>
+        </div>
+      ),
     }),
     columnHelper.accessor("company", {
       header: t("Company"),
     }),
-    columnHelper.accessor("status", {
+    columnHelper.accessor((row) => row.status, {
       header: t("Status"),
       cell: (info) => (
-        <Stack alignItems={"center"} direction={"row"} gap={2}>
-          <Box
-            width={20}
-            height={20}
-            border={5}
-            borderRadius={"50%"}
-            borderColor={"#CBCBCB"}
-            bgcolor={
-              info.getValue()
-                ? theme.palette.success.main
-                : theme.palette.error.main
-            }
-          ></Box>
-          <Typography
-            component={"span"}
-            variant="body2"
-            sx={{
-              color: info.getValue()
-                ? theme.palette.success.main
-                : theme.palette.error.main,
-            }}
-          >
-            {info.getValue() ? t("Active") : t("Deactive")}
-          </Typography>
-        </Stack>
+        <>
+          <Stack alignItems={"center"} direction={"row"} gap={2}>
+            <Box
+              width={20}
+              height={20}
+              border={5}
+              borderRadius={"50%"}
+              borderColor={"#CBCBCB"}
+              bgcolor={
+                info.getValue()
+                  ? theme.palette.success.main
+                  : theme.palette.error.main
+              }
+            />
+            <Typography
+              component={"span"}
+              variant="body2"
+              sx={{
+                color: info.getValue()
+                  ? theme.palette.success.main
+                  : theme.palette.error.main,
+              }}
+            >
+              {info.getValue() ? t("Active") : t("Deactive")}
+            </Typography>
+          </Stack>
+        </>
       ),
     }),
     columnHelper.accessor("access", {
@@ -91,11 +103,20 @@ const DataTable = (props: { data: User[] }) => {
     }),
   ];
 
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const filter = useSelector((state: RootState) => state.global.filterQuery);
   const table = useReactTable({
     data: props.data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting: sorting,
+      globalFilter: filter,
+    },
+    onSortingChange: setSorting,
   });
   return (
     <>
@@ -116,12 +137,26 @@ const DataTable = (props: { data: User[] }) => {
                   <TableCell
                     align="center"
                     key={header.id}
-                    sx={{ borderTop: "1px solid rgba(224, 224, 224, 1)" }}
+                    sx={{
+                      borderTop: "1px solid rgba(224, 224, 224, 1)",
+                      cursor: "pointer",
+                    }}
+                    onClick={header.column.getToggleSortingHandler()}
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                    <Box
+                      display={"flex"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {{
+                        asc: <ArrowDropUpIcon fontSize="large" />,
+                        desc: <ArrowDropDownIcon fontSize="large" />,
+                      }[header.column.getIsSorted() as string] ?? null}
+                    </Box>
                   </TableCell>
                 ))}
               </TableRow>
@@ -184,6 +219,7 @@ const DataTable = (props: { data: User[] }) => {
               table.setPageSize(Number(e.target.value));
             }}
             sx={{ p: 0, minWidth: 100 }}
+            className={styles["my-select"]}
           >
             {[10, 25, 50].map((pageSize) => (
               <MenuItem key={pageSize} value={pageSize}>

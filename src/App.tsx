@@ -12,6 +12,8 @@ import { RouterProvider } from "react-router-dom";
 import Messages_En from "./i18n/Messages_En";
 import Messages_Fa from "./i18n/Messages_Fa";
 import MainRouter from "./routers/MainRouter";
+import { Provider } from "react-redux";
+import store from "@redux/Store";
 
 // Create rtl cache
 const cacheRtl = createCache({
@@ -68,7 +70,14 @@ function App() {
           components: {
             MuiSelect: {
               styleOverrides: {
-                select: "4px 0px 10px 130px !important",
+                select: {
+                  padding: "5px 10px",
+                },
+              },
+              defaultProps: {
+                style: {
+                  borderRadius: "10px",
+                },
               },
             },
           },
@@ -80,13 +89,15 @@ function App() {
 
   return (
     <>
-      <CacheProvider value={cacheRtl}>
-        <ThemeProvider theme={theme}>
-          <RTL>
-            <RouterProvider router={MainRouter} />
-          </RTL>
-        </ThemeProvider>
-      </CacheProvider>
+      <Provider store={store}>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <RTL>
+              <RouterProvider router={MainRouter} />
+            </RTL>
+          </ThemeProvider>
+        </CacheProvider>
+      </Provider>
     </>
   );
 }
