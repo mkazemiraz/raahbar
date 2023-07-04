@@ -14,15 +14,14 @@ export default function NotFound() {
       }}
     >
       <Box sx={{ mt: "130px" }}>
-        {/* <img src={NotFoundImage} alt='404' width={600} height={400} /> */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: "20px" }}>
           <Typography sx={{ fontSize: "20px", fontWeight: 700 }}>
             {t("NotFound")}
           </Typography>
         </Box>
-        <Box sx={{ display: "flex", justifyContent: "center", mt: "60px" }}>
-          {/* <IButton onClick={() => Navigate('/')}>{t('BackHome')}</IButton> */}
-        </Box>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", mt: "60px" }}
+        ></Box>
       </Box>
     </Box>
   );
