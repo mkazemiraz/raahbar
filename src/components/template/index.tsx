@@ -1,9 +1,8 @@
-import { Box, CssBaseline, Toolbar, useTheme } from "@mui/material";
+import { Box, CssBaseline, Toolbar } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Header from "./header";
 import Sidebar from "./sidebar";
 export default function MainTemplate() {
-  const theme = useTheme();
   return (
     <>
       <Box sx={{ display: "flex" }}>
